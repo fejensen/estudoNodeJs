@@ -1,2 +1,0 @@
-# estudoNodeJs
-ApenasParaEstudar

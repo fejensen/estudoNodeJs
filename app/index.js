@@ -28,17 +28,34 @@ server.get('/boards', (req, res) => {
     return res.json(motherBoards)
 })
 
+function isMandatory(req, res, next){
+    if(!req.body.name){
+        return res.status(400).json({
+            error:'Board name is mandatory, please check field.'
+        })
+    }
+    return next();
+}
+
+//Global
+server.use((req, res, next)=>{
+    console.log(`Route Access -> ${req.url}`);
+
+    return next();
+})
+
 //Create
-server.post(path, (req, res) =>{
+server.post(path, isMandatory, (req, res) =>{
     const {name} =  req.body;
 
     motherBoards.push(name);
 
+    console.log(`Board name inserted on top index -> ${req.body.name}`);
     return res.json(motherBoards)
 })
 
 //Read
-server.get(pathIndex , (req, res) => {
+server.get(pathIndex, (req, res) => {
     //const id = req.params.id;
     const { index } = req.params;
 
@@ -46,12 +63,13 @@ server.get(pathIndex , (req, res) => {
 })
 
 //Update
-server.put(pathIndex, (req, res) =>{
+server.put(pathIndex, isMandatory, (req, res) =>{
     const { index } =  req.params;
     const { name } = req.body;
 
     motherBoards[index] = name;
 
+    console.log(`Board name updated on index ${index} -> ${req.body.name}`);
     return res.json(motherBoards);
 })
 
@@ -61,6 +79,7 @@ server.delete(pathIndex, (req, res)=>{
 
     motherBoards.splice(index, 1);
 
+    console.log(`Board name deleted on index ${index} -> ${req.body.name}`);
     return res.json(motherBoards);
 
 })
